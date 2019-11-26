@@ -3,11 +3,11 @@ pipeline {
         stage("Sonarqube") {
                     environment {
                     PROJECT_NAME_KEY = "${project}"
-                    WORK_BASE_DIR = "seller-wallet/seller-wallet-comrade-deploy/staging/src"
+                    WORK_BASE_DIR = "/var/lib/jenkins/workspace/$JOB_NAME/SimpleCustomerApp/src"
                             scannerHome = tool "SonarQ Scanner 4.0 Stg"
                         }
                     steps {
-                            withSonarQubeEnv("SonarQ7.9-Stg") {
+                            withSonarQubeEnv("Sonarqube8.0") {
                                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
                             }
                     }
