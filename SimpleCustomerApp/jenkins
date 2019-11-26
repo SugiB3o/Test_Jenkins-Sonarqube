@@ -3,11 +3,18 @@
         stages {
           stage("build & SonarQube analysis") {
             agent any
-            steps {
-              withSonarQubeEnv('Sonarqube8.0') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
-              }
-            }
+            stage("Sonarqube") {
+                    environment {
+                    PROJECT_NAME_KEY = "${project}"
+                    WORK_BASE_DIR = "/var/lib/jenkins/workspace/$JOB_NAME/SimpleCustomerApp/src"
+                            scannerHome = tool "SonarQ Scanner 4.0 Stg"
+                        }
+                    steps {
+                            withSonarQubeEnv("Sonarqube8.0") {
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
+                            }
+                    }
+                }
           }
           stage("Quality Gate") {
             steps {
