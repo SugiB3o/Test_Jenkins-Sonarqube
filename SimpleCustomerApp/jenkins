@@ -2,7 +2,6 @@ pipeline {
     agent none
     stages {
         stage("build and stash artifact") {
-            agent { label 'worker-01' }
             stages {
                 stage("Sonarqube") {
                     environment {
