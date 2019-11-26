@@ -1,6 +1,10 @@
 pipeline {
-        agent none
-        stage("Sonarqube") {
+    agent none
+    stages {
+        stage("build and stash artifact") {
+            agent { label 'worker-01' }
+            stages {
+                stage("Sonarqube") {
                     environment {
                     PROJECT_NAME_KEY = "${project}"
                     WORK_BASE_DIR = "/var/lib/jenkins/workspace/$JOB_NAME/SimpleCustomerApp/src"
@@ -12,11 +16,14 @@ pipeline {
                             }
                     }
                 }
-          stage("Quality Gate") {
-            steps {
-              timeout(time: 3, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
-              }
+                stage("Quality Gate") {
+                    steps {
+                        timeout(time: 3, unit: "MINUTES") {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }
             }
-          }
         }
+    }
+}
