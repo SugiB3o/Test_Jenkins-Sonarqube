@@ -1,0 +1,22 @@
+pipeline {
+        agent none
+        stage("Sonarqube") {
+                    environment {
+                    PROJECT_NAME_KEY = "${project}"
+                    WORK_BASE_DIR = "seller-wallet/seller-wallet-comrade-deploy/staging/src"
+                            scannerHome = tool "SonarQ Scanner 4.0 Stg"
+                        }
+                    steps {
+                            withSonarQubeEnv("SonarQ7.9-Stg") {
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
+                            }
+                    }
+                }
+          stage("Quality Gate") {
+            steps {
+              timeout(time: 3, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
+            }
+          }
+        }
