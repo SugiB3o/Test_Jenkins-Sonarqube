@@ -4,7 +4,7 @@ pipeline {
         stage("build and stash artifact") {
             stages {
                  stage('SonarQube') {
-                    scannerHome = tool 'SonarQ_Scanner_4.0_Stg';
+                    scannerHome = tool "SonarQ_Scanner_4.0_Stg"
                     withSonarQubeEnv('Sonarqube8.0') { 
                     sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
                     }
