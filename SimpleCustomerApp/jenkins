@@ -1,21 +1,17 @@
-pipeline {
-    agent none
-    stages {
-        stage("build and stash artifact") {
-            stages {
-                stage("Sonarqube") {
-                    environment {
-                    PROJECT_NAME_KEY = "${project}"
-                    WORK_BASE_DIR = "/var/lib/jenkins/workspace/$JOB_NAME/SimpleCustomerApp/src"
-                            scannerHome = tool "SonarQ Scanner 4.0 Stg"
-                        }
-                    steps {
-                            withSonarQubeEnv("Sonarqube8.0") {
-                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
-                            }
-                    }
-                }
-            }
-        }
-    }
+pipeline { 
+ stage("build & SonarQube analysis") {
+          node {
+              withSonarQubeEnv('Sonarqube8.0') {
+                 sh 'mvn clean package sonar:sonar'
+              }
+          }
+      }
+      stage("Quality Gate"){
+          timeout(time: 1, unit: 'HOURS') {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+          }
+      }
 }
