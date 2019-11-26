@@ -5,13 +5,13 @@
             agent any
             steps {
               withSonarQubeEnv('Sonarqube8.0') {
-                sh 'mvn clean package sonar:sonar'
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
               }
             }
           }
           stage("Quality Gate") {
             steps {
-              timeout(time: 1, unit: 'HOURS') {
+              timeout(time: 3, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
               }
             }
