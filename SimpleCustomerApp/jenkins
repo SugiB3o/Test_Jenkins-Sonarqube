@@ -2,11 +2,16 @@ pipeline {
     agent none
     stages {
         stage("build and stash artifact") {
+            agent { label 'master' }
             stages {
-                 stage('SonarQube') {
-                    scannerHome = tool "SonarQ_Scanner_4.0_Stg"
-                    withSonarQubeEnv('Sonarqube8.0') { 
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/*"
+                stage("Sonarqube") {
+                    environment {
+                            scannerHome = tool "Sonarqube8.0"
+                        }
+                    steps {
+                            withSonarQubeEnv("Sonarqube8.0") {
+                                sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=**/* -Dsonar.projectKey=test"
+                            }
                     }
                 }
                 stage("Quality Gate") {
@@ -16,7 +21,9 @@ pipeline {
                         }
                     }
                 }
+
             }
         }
     }
 }
+
